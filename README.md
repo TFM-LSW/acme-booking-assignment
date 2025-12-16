@@ -134,6 +134,61 @@ pnpm dev
 - **Keyboard support**: Escape key to close drawer
 - **Focus indicators**: Visible focus rings on interactive elements
 
+
+## Design decisions and trade-offs
+
+### Showing the condensed calendar
+
+On mobile, when you scroll down and the full calendar moves out of view, a condensed week view appears. I used an Intersection Observer to detect this rather than scroll position calculations. It's a bit more complex than showing it always, but significantly improves the mobile experience by keeping date selection visible.
+
+### Timezone handling limitations
+
+The current implementation derives IANA timezones from UTC offsets (like `Etc/GMT+5`). This works fine for offset-based systems but doesn't handle daylight saving time. A full IANA timezone database would be more accurate but requires backend support to properly map timezones.
+
+### Why simulate the API endpoint?
+
+The `/api/bookings/+server.ts` route currently simulates the booking creation. In production, this would proxy to your actual API. Having this layer gives us a place to add authentication, validation, or rate limiting later without changing the frontend code.
+
+
+## What I'd improve with more time
+
+### Full timezone support
+
+The timezone handling could be much better with:
+
+- Proper daylight saving time support
+- Timezone search/filtering (typing "London" finds GMT)
+- Display timezone abbreviations alongside UTC offsets
+- Better handling of edge cases like half-hour offsets
+
+### Testing
+
+Production code needs tests:
+
+- Unit tests for utilities and the API client
+- Integration tests for the full booking flow
+- E2E tests with Playwright to catch regressions
+- Accessibility tests with axe-core
+
+### Nice-to-have features
+
+If this were a real product, I'd add:
+
+- Multiple attendees per meeting
+- Meeting notes or agenda field
+- Calendar integration (Google Calendar, Outlook)
+- Ability to cancel or reschedule bookings
+
+### Developer experience
+
+To make the codebase easier to work with:
+
+- Storybook for component documentation
+- Pre-commit hooks to catch issues early
+- Conventional commits for better changelog generation
+- More comprehensive JSDoc comments
+
+
 ## Building for production
 
 ```sh
