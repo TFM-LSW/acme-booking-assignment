@@ -173,6 +173,10 @@ Given the time constraints, I prioritised building a reliable, functional page t
 
 On mobile, when you scroll down and the full calendar moves out of view, a condensed week view appears. I used an Intersection Observer to detect this rather than scroll position calculations. It's a bit more complex than showing it always, but significantly improves the mobile experience by keeping date selection visible.
 
+
+### Timezone select input
+I've included a select input for the user (prespect) to toggle between their time and the organisations timezone. I've left this as static for the demo but have inclided a function to hide it when both prospect and organisations timezone is equal.
+
 ### Timezone handling limitations
 
 The current implementation derives IANA timezones from UTC offsets (like `Etc/GMT+5`). This works fine for offset-based systems but doesn't handle daylight saving time. A full IANA timezone database would be more accurate but requires backend support to properly map timezones.
