@@ -165,9 +165,9 @@ pnpm dev
 
 ## Design decisions and trade-offs
 
-### Userability and experience before visual design
-Given the time constraints I've favoured building a reliable page that functions well but also simulates a greate experience for the end user across mobile and desktop.
-Design is often viewed as subjective and without brand guidelines and more time a creative level of finish was a deemed a nice to have.
+### Usability and design principles before creative design
+
+Given the time constraints, I prioritised building a reliable, functional page that delivers a great user experience across mobile and desktop. The focus was on typography (font legibility), solid layout principles, and a few thoughtful UX enhancements. Without brand guidelines and additional time, creative  took a back seat to usability—design aesthetics are subjective, but good UX is measurable.
 
 ### Showing the condensed calendar
 
