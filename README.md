@@ -2,6 +2,34 @@
 
 A modern booking link page built with SvelteKit 2 and Svelte 5, demonstrating best practices for creating a professional meeting scheduling interface. Designed with attention to usability across devices to create an easy-to-use experience on desktop, tablet, and mobile. Works seamlessly with timezone support for organisations and prospects across different timezones.
 
+## Table of Contents
+
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Getting started](#getting-started)
+- [Best practices demonstrated](#best-practices-demonstrated)
+  - [Component architecture](#component-architecture)
+  - [State management](#state-management)
+  - [Data flow](#data-flow)
+  - [Form handling](#form-handling)
+  - [Responsive design](#responsive-design)
+  - [Performance](#performance)
+  - [Accessibility](#accessibility)
+- [Design decisions and trade-offs](#design-decisions-and-trade-offs)
+  - [Showing the condensed calendar](#showing-the-condensed-calendar)
+  - [Timezone handling limitations](#timezone-handling-limitations)
+  - [Why simulate the API endpoint?](#why-simulate-the-api-endpoint)
+- [What I'd improve with more time](#what-id-improve-with-more-time)
+  - [Full timezone support](#full-timezone-support)
+  - [Testing](#testing)
+  - [Nice-to-have features](#nice-to-have-features)
+  - [Developer experience](#developer-experience)
+- [Building for production](#building-for-production)
+- [Deployment](#deployment)
+- [Environment variables](#environment-variables)
+- [License](#license)
+
 ## Features
 
 - **Calendar-based scheduling**: Interactive monthly calendar with availability highlighting
@@ -136,6 +164,10 @@ pnpm dev
 
 
 ## Design decisions and trade-offs
+
+### Userability and experience before visual design
+Given the time constraints I've favoured building a reliable page that functions well but also simulates a greate experience for the end user across mobile and desktop.
+Design is often viewed as subjective and without brand guidelines and more time a creative level of finish was a deemed a nice to have.
 
 ### Showing the condensed calendar
 
