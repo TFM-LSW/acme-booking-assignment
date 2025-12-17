@@ -98,7 +98,7 @@
 					<button
 						type="button"
 						onclick={onClose}
-						class="text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
+						class="text-muted-foreground hover:text-foreground cursor-pointer rounded-lg p-2 transition-colors"
 						aria-label="Close"
 					>
 						<svg

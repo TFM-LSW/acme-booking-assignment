@@ -339,7 +339,7 @@
 						{#if canGoPrevious}
 							<button
 								onclick={() => changeMonth('prev')}
-								class="text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-lg transition-colors"
+								class="text-muted-foreground hover:text-foreground cursor-pointer inline-flex size-10 items-center justify-center rounded-lg transition-colors"
 								aria-label="Previous month"
 							>
 								<svg
@@ -364,7 +364,7 @@
 						</h2>
 						<button
 							onclick={() => changeMonth('next')}
-							class="text-muted-foreground hover:text-foreground inline-flex size-10 items-center justify-center rounded-lg transition-colors"
+							class="text-muted-foreground hover:text-foreground cursor-pointer inline-flex size-10 items-center justify-center rounded-lg transition-colors"
 							aria-label="Next month"
 						>
 							<svg
