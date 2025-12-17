@@ -45,7 +45,7 @@
 			<button
 				type="button"
 				onclick={() => handleSlotClick(slot)}
-				class="border-border hover:border-primary hover:bg-accent bg-background flex w-full items-center justify-between rounded-lg border p-2 transition-all"
+				class="border-border hover:border-primary hover:bg-accent bg-background flex w-full cursor-pointer items-center justify-between rounded-lg border p-2 transition-all"
 			>
 				<div class="flex-1 text-center">
 					<p class="text-foreground text-lg font-semibold">
