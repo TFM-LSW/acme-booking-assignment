@@ -294,7 +294,7 @@
 					type="submit"
 					onclick={handleSubmit}
 					disabled={isSubmitting || !isFormValid}
-					class="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground cursor-pointer w-full rounded-md px-4 py-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
+					class="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground w-full cursor-pointer rounded-md px-4 py-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
 				>
 					{isSubmitting ? 'Confirming...' : 'Confirm meeting'}
 				</button>
@@ -302,7 +302,7 @@
 				<button
 					type="button"
 					onclick={onClose}
-					class="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer w-full rounded-md px-4 py-3 text-sm font-semibold transition-colors"
+					class="bg-primary text-primary-foreground hover:bg-primary/90 w-full cursor-pointer rounded-md px-4 py-3 text-sm font-semibold transition-colors"
 				>
 					Done
 				</button>
