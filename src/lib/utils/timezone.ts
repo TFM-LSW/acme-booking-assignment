@@ -1,35 +1,31 @@
+import { formatInTimeZone } from 'date-fns-tz';
+
 /**
  * Timezone utility functions for handling timezone detection, offset calculation,
  * and timezone information extraction from ISO 8601 timestamps.
  * 
- * This module focuses on UTC offset-based timezone handling rather than location-based
- * timezones, using Etc/GMT identifiers for compatibility with formatInTimeZone.
+ * This module focuses on UTC offset-based timezone handling using ISO 8601 timestamp
+ * offset information rather than IANA timezone identifiers. Etc/GMT identifiers are
+ * used for formatInTimeZone compatibility when needed.
  */
 
 /**
- * Gets the UTC offset string for a given timezone based on the browser's current time.
- * Uses the browser's built-in timezone offset calculation.
- * 
- * @param timezone - IANA timezone identifier (e.g., 'America/New_York', 'UTC')
- * @returns Formatted offset string for display (e.g., "UTC-8", "UTC+1", "UTC+0", "UTC+5:30")
- * 
- * @example
- * getTimezoneOffset('America/New_York') // returns "UTC-5" (during EST)
- * getTimezoneOffset('Asia/Kolkata') // returns "UTC+5:30"
+ * ISO 8601 timestamp string with timezone offset or Z suffix.
+ * @example '2025-12-16T09:00:00-05:00' | '2025-12-16T09:00:00Z' | '2025-12-16T09:00:00+05:30'
  */
-export function getTimezoneOffset(timezone?: string): string {
-	if (!timezone) return '';
-	
-	// Get current offset in minutes
-	const now = new Date();
-	const offsetMinutes = -now.getTimezoneOffset();
-	const hours = Math.floor(Math.abs(offsetMinutes) / 60);
-	const minutes = Math.abs(offsetMinutes) % 60;
-	const sign = offsetMinutes >= 0 ? '+' : '-';
-	const offset = minutes > 0 ? `${hours}:${minutes.toString().padStart(2, '0')}` : `${hours}`;
-	
-	return `UTC${sign}${offset}`;
-}
+export type ISO8601Timestamp = string;
+
+/**
+ * UTC offset string for display purposes.
+ * @example 'UTC+0' | 'UTC-5' | 'UTC+5:30'
+ */
+export type UTCOffsetDisplay = string;
+
+/**
+ * IANA timezone identifier.
+ * @example 'America/New_York' | 'Europe/London' | 'UTC' | 'Etc/GMT+5'
+ */
+export type IANATimezone = string;
 
 /**
  * Extracts the UTC offset from an ISO 8601 timestamp for display purposes.
@@ -43,37 +39,62 @@ export function getTimezoneOffset(timezone?: string): string {
  * parseOffsetFromTimestamp('2025-12-16T09:00:00-05:00') // returns 'UTC-5'
  * parseOffsetFromTimestamp('2025-12-16T09:00:00+05:30') // returns 'UTC+5:30'
  */
-export function parseOffsetFromTimestamp(timestamp: string): string {
-	// Check for Z (UTC) format first
+export function parseOffsetFromTimestamp(timestamp: ISO8601Timestamp): UTCOffsetDisplay {
 	if (timestamp.endsWith('Z')) {
 		return 'UTC+0';
 	}
 	
-	// Extract offset from ISO string (e.g., "2025-12-16T09:00:00-05:00")
 	const match = timestamp.match(/([+-]\d{2}):(\d{2})$/);
 	if (match) {
 		const hours = parseInt(match[1]);
 		const minutes = match[2];
 		if (minutes === '00') {
 			return `UTC${hours >= 0 ? '+' : ''}${hours}`;
-		} else {
-			return `UTC${match[1]}:${minutes}`;
 		}
+		return `UTC${match[1]}:${minutes}`;
 	}
 	
-	return 'UTC+0'; // Fallback
+	return 'UTC+0';
 }
 
 /**
- * Determines whether the timezone selector should be shown.
+ * Determines whether the timezone selector should be shown to the user.
  * Only shows when the user's UTC offset differs from the organization's UTC offset.
+ * Compares offsets extracted from ISO 8601 timestamp strings rather than timezone names
+ * to ensure accurate comparison based on actual offset data.
  * 
- * @param localOffset - User's local timezone offset (e.g., "UTC-8")
- * @param orgOffset - Organization's timezone offset (e.g., "UTC-5")
- * @returns True if the offsets differ, false otherwise
+ * @param userTimestamp - ISO 8601 timestamp from user's timezone (e.g., '2025-12-16T09:00:00Z', '2025-12-16T09:00:00-05:00')
+ * @param orgTimestamp - ISO 8601 timestamp from organization's timezone (e.g., '2025-12-16T14:00:00Z', '2025-12-16T09:00:00-05:00')
+ * @returns True if the UTC offsets differ, false otherwise
+ * 
+ * @example
+ * shouldShowTimezoneSelector('2025-12-16T09:00:00Z', '2025-12-16T09:00:00Z') // returns false (both UTC+0)
+ * shouldShowTimezoneSelector('2025-12-16T09:00:00-05:00', '2025-12-16T14:00:00Z') // returns true (UTC-5 vs UTC+0)
  */
-export function shouldShowTimezoneSelector(localOffset: string, orgOffset: string): boolean {
-	return localOffset !== orgOffset;
+export function shouldShowTimezoneSelector(userTimestamp: ISO8601Timestamp, orgTimestamp: ISO8601Timestamp): boolean {
+	const userOffset = parseOffsetFromTimestamp(userTimestamp);
+	const orgOffset = parseOffsetFromTimestamp(orgTimestamp);
+	
+	return userOffset !== orgOffset;
+}
+
+/**
+ * Generates an ISO 8601 timestamp representing the current time in the user's local timezone.
+ * Detects the user's timezone using the Intl API and formats the current time with its UTC offset
+ * using date-fns-tz formatInTimeZone function.
+ * 
+ * @returns ISO 8601 timestamp with offset (e.g., '2025-12-18T14:30:00-05:00' or '2025-12-18T19:30:00Z')
+ * 
+ * @example
+ * getUserTimestamp() // returns '2025-12-18T14:30:00-05:00' for a user in EST
+ * getUserTimestamp() // returns '2025-12-18T19:30:00Z' for a user in UTC
+ */
+export function getUserTimestamp(): ISO8601Timestamp {
+	const now = new Date();
+	const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	
+	// Format with timezone offset using date-fns-tz
+	return formatInTimeZone(now, userTimezone, "yyyy-MM-dd'T'HH:mm:ssXXX");
 }
 
 /**
@@ -96,11 +117,9 @@ export function shouldShowTimezoneSelector(localOffset: string, orgOffset: strin
  * getTimezoneFromOffset('2025-12-16T09:00:00-05:00') // returns 'Etc/GMT+5'
  * getTimezoneFromOffset('2025-12-16T09:00:00+05:30', 'Asia/Kolkata') // returns 'Asia/Kolkata'
  */
-export function getTimezoneFromOffset(timestamp: string, fallbackTimezone: string = 'UTC'): string {
-	// Handle Z format
+export function getTimezoneFromOffset(timestamp: ISO8601Timestamp, fallbackTimezone: IANATimezone = 'UTC'): IANATimezone {
 	if (timestamp.endsWith('Z')) return 'UTC';
 	
-	// Extract offset from timestamp (e.g., "-05:00")
 	const match = timestamp.match(/([+-])(\d{2}):(\d{2})$/);
 	if (!match) return 'UTC';
 	
@@ -109,8 +128,6 @@ export function getTimezoneFromOffset(timestamp: string, fallbackTimezone: strin
 	const minutes = match[3];
 	
 	// For Etc/GMT timezones, signs are inverted
-	// UTC-5 (EST) = Etc/GMT+5
-	// UTC+5 = Etc/GMT-5
 	const invertedSign = sign === '+' ? '-' : '+';
 	
 	// Only use Etc/GMT for whole hour offsets
@@ -118,7 +135,5 @@ export function getTimezoneFromOffset(timestamp: string, fallbackTimezone: strin
 		return `Etc/GMT${invertedSign}${hours}`;
 	}
 	
-	// For non-whole hour offsets, use the fallback timezone
-	// since Etc/GMT doesn't support 30/45 minute offsets
 	return fallbackTimezone;
 }

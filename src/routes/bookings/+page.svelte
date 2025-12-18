@@ -19,10 +19,10 @@
 	import { page } from '$app/stores';
 	import { detectUserTimezone } from '$lib/timezones';
 	import {
-		getTimezoneOffset,
 		parseOffsetFromTimestamp,
 		shouldShowTimezoneSelector,
-		getTimezoneFromOffset
+		getTimezoneFromOffset,
+		getUserTimestamp
 	} from '$lib/utils/timezone';
 	import { getDatesWithAvailability, generateThirtyMinuteSlots } from '$lib/utils/availability';
 	import { intersectionObserver } from '$lib/utils/actions';
@@ -82,9 +82,10 @@
 
 	/**
 	 * Gets the UTC offset string for the user's local timezone.
+	 * Extracts offset from the current timestamp in the user's timezone.
 	 * @returns Formatted offset string (e.g., "UTC-8", "UTC+1", "UTC+0", "UTC+5:30")
 	 */
-	let localTimezoneOffset = $derived(getTimezoneOffset(detectedTimezone));
+	let localTimezoneOffset = $derived(parseOffsetFromTimestamp(getUserTimestamp()));
 
 	/**
 	 * Gets the UTC offset for organization timezone by parsing availability data timestamps.
@@ -414,19 +415,21 @@
 							</h2>
 						</div>
 
-						<div class="mb-4">
-							<select
-								id="timezone-select"
-								bind:value={selectedTimezone}
-								class="border-input bg-background ring-offset-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
-							>
-								<option value="" disabled>Timezone</option>
-								<option value={detectedTimezone}>
-									My local time {localTimezoneOffset ? `(${localTimezoneOffset})` : ''}
-								</option>
-								<option value={orgTimezone}>ACME local time ({orgTimezoneOffset})</option>
-							</select>
-						</div>
+						{#if data.availability[0] && shouldShowTimezoneSelector(getUserTimestamp(), data.availability[0].start)}
+							<div class="mb-4">
+								<select
+									id="timezone-select"
+									bind:value={selectedTimezone}
+									class="border-input bg-background ring-offset-background focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none"
+								>
+									<option value="" disabled>Timezone</option>
+									<option value={detectedTimezone}>
+										My local time {localTimezoneOffset ? `(${localTimezoneOffset})` : ''}
+									</option>
+									<option value={orgTimezone}>ACME local time ({orgTimezoneOffset})</option>
+								</select>
+							</div>
+						{/if}
 						<TimeSlotsList
 							slots={selectedDateSlots}
 							{selectedTimezone}
