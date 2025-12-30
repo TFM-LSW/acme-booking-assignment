@@ -3,7 +3,7 @@
  * Handles all booking-related API calls
  */
 
-import { PUBLIC_API_BASE_URL, PUBLIC_API_MEETINGS_PATH } from '$env/static/public';
+import { PUBLIC_API_BASE_URL, PUBLIC_API_BOOKINGS_PATH } from '$env/static/public';
 
 export interface Attendee {
 	email: string;
@@ -23,14 +23,19 @@ export interface CreateBookingResponse {
 }
 
 /**
- * Creates a new booking
+ * Creates a new booking via the local server proxy
  * @param data Booking details
  * @returns Promise resolving to booking confirmation
  */
 export async function createBooking(
 	data: CreateBookingRequest
 ): Promise<CreateBookingResponse> {
-	const response = await fetch(`${PUBLIC_API_BASE_URL}${PUBLIC_API_MEETINGS_PATH}`, {
+	// Call local SvelteKit server proxy
+	const url = PUBLIC_API_BASE_URL 
+		? `${PUBLIC_API_BASE_URL}${PUBLIC_API_BOOKINGS_PATH}`
+		: PUBLIC_API_BOOKINGS_PATH;
+	
+	const response = await fetch(url, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
