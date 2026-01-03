@@ -7,20 +7,14 @@ export default defineConfig({
 	plugins: [svelte({ hot: !process.env.VITEST })],
 	test: {
 		globals: true,
-		environment: 'jsdom',
-		setupFiles: ['./vitest.setup.ts'],
-		include: ['src/**/*.{test,spec}.{js,ts}'],
-		exclude: ['src/tests/e2e/**'],
-		coverage: {
-			provider: 'v8',
-			reporter: ['text', 'html', 'lcov'],
-			exclude: ['node_modules/', 'src/routes/**', '.svelte-kit/', 'src/tests/e2e/**']
-		}
+		environment: 'node', // E2E tests run in node, not jsdom
+		include: ['src/tests/e2e/**/*.{test,spec}.{js,ts}'],
+		testTimeout: 30000, // E2E tests need longer timeout
+		hookTimeout: 30000
 	},
 	resolve: {
 		alias: {
 			$lib: resolve(dirname(fileURLToPath(import.meta.url)), './src/lib')
-		},
-		conditions: ['browser']
+		}
 	}
 });
