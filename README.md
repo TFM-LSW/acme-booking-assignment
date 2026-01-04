@@ -162,19 +162,18 @@ pnpm dev
 - **Keyboard support**: Escape key to close drawer
 - **Focus indicators**: Visible focus rings on interactive elements
 
-
 ## Design decisions and trade-offs
 
 ### Usability and design principles before creative design
 
-Given the time constraints, I prioritised building a reliable, functional page that delivers a great user experience across mobile and desktop. The focus was on typography (font legibility), solid layout principles, and a few thoughtful UX enhancements. Without brand guidelines and additional time, creative  took a back seat to usability—design aesthetics are subjective, but good UX is measurable.
+Given the time constraints, I prioritised building a reliable, functional page that delivers a great user experience across mobile and desktop. The focus was on typography (font legibility), solid layout principles, and a few thoughtful UX enhancements. Without brand guidelines and additional time, creative took a back seat to usability—design aesthetics are subjective, but good UX is measurable.
 
 ### Showing the condensed calendar
 
 On mobile, when you scroll down and the full calendar moves out of view, a condensed week view appears. I used an Intersection Observer to detect this rather than scroll position calculations. It's a bit more complex than showing it always, but significantly improves the mobile experience by keeping date selection visible.
 
-
 ### Timezone select input
+
 I've included a select input for the user (prespect) to toggle between their time and the organisations timezone. I've left this as static for the demo but have inclided a function to hide it when both prospect and organisations timezone is equal.
 
 ### Timezone handling limitations
@@ -184,7 +183,6 @@ The current implementation derives IANA timezones from UTC offsets (like `Etc/GM
 ### Why simulate the API endpoint?
 
 The `/api/bookings/+server.ts` route currently simulates the booking creation. In production, this would proxy to your actual API. Having this layer gives us a place to add authentication, validation, or rate limiting later without changing the frontend code.
-
 
 ## What I'd improve with more time
 
@@ -199,11 +197,33 @@ The timezone handling could be much better with:
 
 ### Testing
 
-Production code needs tests:
+Testing setup includes:
 
-- Unit tests for utilities and the API client
+- **Unit tests** for utilities (timezone, availability) with Vitest
+- **Component tests** for interactive components using Testing Library
+- **E2E tests** with [Stagehand](https://github.com/browserbase/stagehand) for full user flow testing
+
+#### Running Tests
+
+```bash
+# Run unit and component tests
+pnpm test:run
+
+# Run e2e tests (no API key required)
+pnpm test:e2e
+
+# Run e2e tests in UI mode
+pnpm test:e2e:ui
+
+# Run with automated dev server
+./scripts/run-e2e-tests.sh
+```
+
+**E2E Testing Setup**: E2E tests run in standard mode by default (no API key required). For AI-powered mode using natural language actions, an API key is needed (Google Gemini recommended - free tier available). See [E2E Testing README](./src/tests/e2e/README.md) for setup instructions.
+
+Future improvements:
+
 - Integration tests for the full booking flow
-- E2E tests with Playwright to catch regressions
 - Accessibility tests with axe-core
 
 ### Nice-to-have features
@@ -223,7 +243,6 @@ To make the codebase easier to work with:
 - Pre-commit hooks to catch issues early
 - Conventional commits for better changelog generation
 - More comprehensive JSDoc comments
-
 
 ## Building for production
 

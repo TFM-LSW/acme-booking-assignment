@@ -3,18 +3,12 @@ import { shouldShowTimezoneSelector, parseOffsetFromTimestamp, getUserTimestamp 
 
 describe('shouldShowTimezoneSelector', () => {
 	it('should return false when timestamps have the same offset (UTC)', () => {
-		const result = shouldShowTimezoneSelector(
-			'2025-12-16T09:00:00Z',
-			'2025-12-16T09:00:00Z'
-		);
+		const result = shouldShowTimezoneSelector('2025-12-16T09:00:00Z', '2025-12-16T09:00:00Z');
 		expect(result).toBe(false);
 	});
 
 	it('should return true when timestamps have different offsets', () => {
-		const result = shouldShowTimezoneSelector(
-			'2025-12-16T09:00:00-05:00',
-			'2025-12-16T14:00:00Z'
-		);
+		const result = shouldShowTimezoneSelector('2025-12-16T09:00:00-05:00', '2025-12-16T14:00:00Z');
 		expect(result).toBe(true);
 	});
 
@@ -35,10 +29,7 @@ describe('shouldShowTimezoneSelector', () => {
 	});
 
 	it('should handle timestamps with half-hour offsets correctly', () => {
-		const result = shouldShowTimezoneSelector(
-			'2025-12-16T09:00:00+05:30',
-			'2025-12-16T14:00:00Z'
-		);
+		const result = shouldShowTimezoneSelector('2025-12-16T09:00:00+05:30', '2025-12-16T14:00:00Z');
 		expect(result).toBe(true);
 	});
 
@@ -80,7 +71,7 @@ describe('parseOffsetFromTimestamp', () => {
 describe('getUserTimestamp', () => {
 	it('should return a valid ISO 8601 timestamp with offset or Z', () => {
 		const timestamp = getUserTimestamp();
-		
+
 		// Should match ISO 8601 format with offset or Z for UTC
 		expect(timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}([+-]\d{2}:\d{2}|Z)$/);
 	});
@@ -88,7 +79,7 @@ describe('getUserTimestamp', () => {
 	it('should return a timestamp that can be parsed', () => {
 		const timestamp = getUserTimestamp();
 		const date = new Date(timestamp);
-		
+
 		expect(date).toBeInstanceOf(Date);
 		expect(isNaN(date.getTime())).toBe(false);
 	});
@@ -96,7 +87,7 @@ describe('getUserTimestamp', () => {
 	it('should return a timestamp with extractable offset', () => {
 		const timestamp = getUserTimestamp();
 		const offset = parseOffsetFromTimestamp(timestamp);
-		
+
 		expect(offset).toMatch(/^UTC[+-]\d+(:30|:45)?$/);
 	});
 });

@@ -20,7 +20,7 @@ export interface AvailabilitySlot {
 
 /**
  * Validates a date string for both format and actual date validity.
- * 
+ *
  * @param dateStr - Date string to validate
  * @returns True if valid YYYY-MM-DD format and represents a real date
  */
@@ -33,16 +33,16 @@ function isValidDateString(dateStr: string): boolean {
 /**
  * Load function for the bookings page.
  * Fetches availability data for a given date range from the API.
- * 
+ *
  * URL Parameters:
  * - start: Start date in YYYY-MM-DD format (defaults to today, validated)
  * - end: End date in YYYY-MM-DD format (defaults to last day of current month, validated)
- * 
+ *
  * Validates that:
  * - Dates are in correct format and represent real dates
  * - Start date is not after end date
  * - Start date is not in the past
- * 
+ *
  * Redirects to clean URL with valid defaults if params are invalid or missing.
  * Returns availability slots, date range, and optional error message.
  */
@@ -50,26 +50,26 @@ export const load: PageLoad = async ({ fetch, url }) => {
 	const searchParams = url.searchParams;
 	const startParam = searchParams.get('start');
 	const endParam = searchParams.get('end');
-	
+
 	// Get defaults
 	const defaultStart = getDefaultStartDate();
 	const defaultEnd = getDefaultEndDate();
-	
+
 	// Validate format and actual date validity
 	const startIsValid = startParam ? isValidDateString(startParam) : false;
 	const endIsValid = endParam ? isValidDateString(endParam) : false;
-	
+
 	let startDate = startIsValid ? startParam : defaultStart;
 	let endDate = endIsValid ? endParam : defaultEnd;
-	
+
 	// Additional validation: ensure start <= end and start >= today
 	let needsRedirect = false;
-	
+
 	if (startIsValid && endIsValid) {
 		const start = parseISO(startParam!);
 		const end = parseISO(endParam!);
 		const today = startOfToday();
-		
+
 		// Start date can't be in the past
 		if (isBefore(start, today)) {
 			startDate = defaultStart;
@@ -86,7 +86,7 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		// One or both params invalid - use defaults
 		needsRedirect = true;
 	}
-	
+
 	// Redirect to clean URL with valid params if needed
 	if (needsRedirect && (startParam || endParam)) {
 		throw redirect(302, `/bookings?start=${startDate}&end=${endDate}`);
