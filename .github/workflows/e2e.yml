@@ -39,8 +39,9 @@ jobs:
           # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           NODE_ENV: test
           BASE_URL: http://localhost:5173
-          EXTERNAL_API_BASE_URL: ${{ secrets.EXTERNAL_API_BASE_URL || 'https://mock-api.example.com' }}
-          EXTERNAL_API_AVAILABILITY_PATH: ${{ secrets. EXTERNAL_API_AVAILABILITY_PATH || '/availability' }}
+          EXTERNAL_API_BASE_URL: ${{ secrets.EXTERNAL_API_BASE_URL }}
+          EXTERNAL_API_AVAILABILITY_PATH: ${{ secrets.EXTERNAL_API_AVAILABILITY_PATH }}
+          EXTERNAL_API_MEETINGS_PATH: ${{ secrets.EXTERNAL_API_MEETINGS_PATH }}
 
       - name: Upload test results
         if: failure()
