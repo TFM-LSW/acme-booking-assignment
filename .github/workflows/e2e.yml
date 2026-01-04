@@ -38,7 +38,7 @@ jobs:
           # Optional: Uncomment to enable AI-powered tests
           # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           NODE_ENV: test
-          BASE_URL: http://localhost:5173
+          PUBLIC_API_BASE_URL: ''
           PUBLIC_API_AVAILABILITY_PATH: /api/availability
           PUBLIC_API_BOOKINGS_PATH: /api/bookings
           EXTERNAL_API_BASE_URL: ${{ secrets.EXTERNAL_API_BASE_URL }}
