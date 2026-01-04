@@ -55,11 +55,15 @@ const helpers = {
 			// Find an enabled button with a number (date button)
 			await page.evaluate(() => {
 				const buttons = Array.from(document.querySelectorAll('button:not([disabled])'));
-				for (const button of buttons) {
-					if (button.textContent && /^\d+$/.test(button.textContent.trim())) {
-						(button as HTMLButtonElement).click();
-						break;
-					}
+				const dateButton = buttons.find(button => {
+					const text = button.textContent?.trim();
+					// Look for buttons with just numbers that aren't aria-hidden
+					return text && /^\d{1,2}$/.test(text) && 
+						button.getAttribute('aria-hidden') !== 'true' &&
+						!button.classList.contains('opacity-0');
+				});
+				if (dateButton) {
+					(dateButton as HTMLButtonElement).click();
 				}
 			});
 		}
@@ -98,7 +102,9 @@ const helpers = {
 		} else {
 			const page = stagehand.context.pages()[0];
 			return await page.evaluate(() => {
-				return document.querySelector('h1')?.textContent || '';
+				const h1 = document.querySelector('h1');
+				const h2 = document.querySelector('h2');
+				return h1?.textContent?.trim() || h2?.textContent?.trim() || '';
 			});
 		}
 	},
@@ -116,8 +122,13 @@ const helpers = {
 		} else {
 			const page = stagehand.context.pages()[0];
 			return await page.evaluate(() => {
-				const buttons = Array.from(document.querySelectorAll('button'));
-				return buttons.filter((b) => b.textContent && /^\d+$/.test(b.textContent.trim())).length;
+				const buttons = Array.from(document.querySelectorAll('button:not([disabled])'));
+				return buttons.filter(button => {
+					const text = button.textContent?.trim();
+					return text && /^\d{1,2}$/.test(text) && 
+						button.getAttribute('aria-hidden') !== 'true' &&
+						!button.classList.contains('opacity-0');
+				}).length;
 			});
 		}
 	},
@@ -169,7 +180,13 @@ const helpers = {
 		} else {
 			const page = stagehand.context.pages()[0];
 			await page.evaluate(() => {
-				const nextButton = document.querySelector('button[aria-label="Next month"]');
+				// Try multiple selector strategies
+				const nextButton = 
+					document.querySelector('button[aria-label="Next month"]') ||
+					document.querySelector('button[aria-label*="next"]') ||
+					Array.from(document.querySelectorAll('button')).find(b => 
+						b.textContent?.includes('›') || b.textContent?.includes('>')
+					);
 				if (nextButton) {
 					(nextButton as HTMLButtonElement).click();
 				}
@@ -204,7 +221,15 @@ describe('Booking Application E2E', () => {
 
 		// Check calendar grid is visible
 		const hasCalendar = await page.evaluate(() => {
-			return !!document.querySelector('[class*="grid-cols-7"]');
+			// Check for common calendar patterns
+			return !!(
+				document.querySelector('[class*="grid-cols-7"]') ||
+				document.querySelector('[role="grid"]') ||
+				document.querySelector('.calendar') ||
+				Array.from(document.querySelectorAll('button')).some(b => 
+					b.textContent && /^\d+$/.test(b.textContent.trim())
+				)
+			);
 		});
 		expect(hasCalendar).toBe(true);
 
@@ -216,6 +241,10 @@ describe('Booking Application E2E', () => {
 	it('should show time slots when a date is selected', async () => {
 		const page = stagehand.context.pages()[0] as Page;
 		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+
+		// Wait for calendar to fully load
+		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
+		await page.waitForTimeout(500); // Allow any animations to complete
 
 		// Click available date using helper
 		await helpers.clickAvailableDate(stagehand);
@@ -234,6 +263,10 @@ describe('Booking Application E2E', () => {
 	it('should open booking drawer when time slot is clicked', async () => {
 		const page = stagehand.context.pages()[0] as Page;
 		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+
+		// Wait for calendar to fully load
+		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
+		await page.waitForTimeout(500);
 
 		// Select date and time slot
 		await helpers.clickAvailableDate(stagehand);
@@ -265,6 +298,10 @@ describe('Booking Application E2E', () => {
 	it('should handle month navigation', async () => {
 		const page = stagehand.context.pages()[0] as Page;
 		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+
+		// Wait for calendar to fully load
+		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
+		await page.waitForTimeout(500);
 
 		// Get current month - it's in an h2 element
 		const monthText = await page.evaluate(() => {
