@@ -37,6 +37,7 @@ jobs:
           # Optional: Uncomment to enable AI-powered tests
           # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           NODE_ENV: test
+          E2E_BASE_URL: http://localhost:5173
 
       - name: Upload test results
         if: failure()
