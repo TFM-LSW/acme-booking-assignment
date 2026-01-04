@@ -2,10 +2,10 @@ import type { V3Options } from '@browserbasehq/stagehand';
 
 /**
  * Stagehand configuration for e2e tests
- * 
+ *
  * This configuration uses LOCAL environment for testing.
  * For AI-powered testing, you need to provide an API key via environment variable.
- * 
+ *
  * Supported API keys (add to .env):
  * - OPENAI_API_KEY (ChatGPT)
  * - GOOGLE_GENERATIVE_AI_API_KEY (Gemini - free tier available)

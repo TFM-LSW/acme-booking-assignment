@@ -19,14 +19,14 @@ export interface IntersectionObserverOptions {
 /**
  * Svelte action that observes when an element enters or exits the viewport.
  * Useful for sticky headers, lazy loading, scroll animations, etc.
- * 
+ *
  * @param node - The DOM element to observe
  * @param options - Configuration for the intersection observer
  * @returns Svelte action lifecycle methods
- * 
+ *
  * @example
  * ```svelte
- * <div use:intersectionObserver={{ 
+ * <div use:intersectionObserver={{
  *   onIntersect: (isVisible) => console.log('Visible:', isVisible),
  *   threshold: 0.1,
  *   rootMargin: '-50px 0px 0px 0px'

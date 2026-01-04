@@ -11,8 +11,8 @@ export interface Attendee {
 }
 
 export interface CreateBookingRequest {
-    start: string; // ISO 8601 timestamp
-    end: string; // ISO 8601 timestamp
+	start: string; // ISO 8601 timestamp
+	end: string; // ISO 8601 timestamp
 	attendees: Attendee[];
 }
 
@@ -27,14 +27,12 @@ export interface CreateBookingResponse {
  * @param data Booking details
  * @returns Promise resolving to booking confirmation
  */
-export async function createBooking(
-	data: CreateBookingRequest
-): Promise<CreateBookingResponse> {
+export async function createBooking(data: CreateBookingRequest): Promise<CreateBookingResponse> {
 	// Call local SvelteKit server proxy
-	const url = PUBLIC_API_BASE_URL 
+	const url = PUBLIC_API_BASE_URL
 		? `${PUBLIC_API_BASE_URL}${PUBLIC_API_BOOKINGS_PATH}`
 		: PUBLIC_API_BOOKINGS_PATH;
-	
+
 	const response = await fetch(url, {
 		method: 'POST',
 		headers: {

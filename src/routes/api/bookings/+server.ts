@@ -19,7 +19,7 @@ interface CreateBookingRequest {
  */
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const data = await request.json() as CreateBookingRequest;
+		const data = (await request.json()) as CreateBookingRequest;
 
 		// Validate required fields
 		if (!data.start || !data.end || !data.attendees || data.attendees.length === 0) {
@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Forward request to external API
 		const externalApiUrl = `${EXTERNAL_API_BASE_URL}${EXTERNAL_API_MEETINGS_PATH}`;
-		
+
 		console.log('Forwarding booking to external API:', externalApiUrl);
 
 		const response = await fetch(externalApiUrl, {
@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		if (!response.ok) {
 			const errorText = await response.text();
 			console.error('External API error:', response.status, errorText);
-			
+
 			return json(
 				{
 					success: false,
@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		const result = await response.json();
-		
+
 		console.log('Booking created successfully:', result);
 
 		return json(result);
