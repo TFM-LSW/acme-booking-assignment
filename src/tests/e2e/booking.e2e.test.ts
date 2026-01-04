@@ -15,7 +15,7 @@ import type { Page } from 'playwright';
  */
 
 const USE_AI_ACTIONS = process.env.USE_AI_ACTIONS === 'true';
-const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
+const E2E_BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:5173';
 
 /**
  * Helper function to wait for a condition to be true
@@ -189,7 +189,7 @@ describe('Booking Application E2E', () => {
 
 	it('should load the booking page successfully', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+		await page.goto(`${E2E_BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		const heading = await helpers.getHeading(stagehand);
 		expect(heading).toBeTruthy();
@@ -198,7 +198,7 @@ describe('Booking Application E2E', () => {
 
 	it('should display calendar and allow date selection', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+		await page.goto(`${E2E_BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Check calendar grid is visible
 		const hasCalendar = await page.evaluate(() => {
@@ -213,7 +213,7 @@ describe('Booking Application E2E', () => {
 
 	it('should show time slots when a date is selected', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+		await page.goto(`${E2E_BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Click available date using helper
 		await helpers.clickAvailableDate(stagehand);
@@ -231,7 +231,7 @@ describe('Booking Application E2E', () => {
 
 	it('should open booking drawer when time slot is clicked', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+		await page.goto(`${E2E_BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Select date and time slot
 		await helpers.clickAvailableDate(stagehand);
@@ -262,7 +262,7 @@ describe('Booking Application E2E', () => {
 
 	it('should handle month navigation', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
+		await page.goto(`${E2E_BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Get current month - it's in an h2 element
 		const monthText = await page.evaluate(() => {
