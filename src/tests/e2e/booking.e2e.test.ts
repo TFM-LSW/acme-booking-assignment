@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Stagehand } from '@browserbasehq/stagehand';
 import { z } from 'zod';
 import { stagehandConfig } from './stagehand.config';
-
+import type { Page } from 'playwright';
 /**
  * End-to-end tests for the booking application
  * 
@@ -15,6 +15,27 @@ import { stagehandConfig } from './stagehand.config';
  */
 
 const USE_AI_ACTIONS = process.env.USE_AI_ACTIONS === 'true';
+
+/**
+ * Helper function to wait for a condition to be true
+ * This polls the condition and returns as soon as it's met, rather than waiting a fixed duration
+ */
+async function waitForCondition(
+	page: any,
+	condition: () => boolean | Promise<boolean>,
+	options: { timeout?: number; pollInterval?: number } = {}
+): Promise<void> {
+	const { timeout = 10000, pollInterval = 100 } = options;
+	const startTime = Date.now();
+	
+	while (Date.now() - startTime < timeout) {
+		const result = await page.evaluate(condition);
+		if (result) return;
+		await new Promise((resolve) => setTimeout(resolve, pollInterval));
+	}
+	
+	throw new Error(`Timeout waiting for condition after ${timeout}ms`);
+}
 
 /**
  * Helper functions that switch between AI and standard selectors
@@ -167,7 +188,7 @@ describe('Booking Application E2E', () => {
 	});
 
 	it('should load the booking page successfully', async () => {
-		const page = stagehand.context.pages()[0];
+		const page = stagehand.context.pages()[0] as Page;
 		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
 
 		const heading = await helpers.getHeading(stagehand);
@@ -176,7 +197,7 @@ describe('Booking Application E2E', () => {
 	}, 30000);
 
 	it('should display calendar and allow date selection', async () => {
-		const page = stagehand.context.pages()[0];
+		const page = stagehand.context.pages()[0] as Page;
 		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
 
 		// Check calendar grid is visible
@@ -191,12 +212,17 @@ describe('Booking Application E2E', () => {
 	}, 30000);
 
 	it('should show time slots when a date is selected', async () => {
-		const page = stagehand.context.pages()[0];
+		const page = stagehand.context.pages()[0] as Page;
 		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
 
 		// Click available date using helper
 		await helpers.clickAvailableDate(stagehand);
-		await new Promise((resolve) => setTimeout(resolve, 3000));
+		
+		// Wait for time slots to appear - polls and exits as soon as condition is met
+		await waitForCondition(page, () => {
+			const buttons = Array.from(document.querySelectorAll('button'));
+			return buttons.some((b) => b.textContent && /\d+:\d+/.test(b.textContent));
+		});
 
 		// Check if time slots are visible
 		const timeSlotsVisible = await helpers.areTimeSlotsVisible(stagehand);
@@ -204,14 +230,25 @@ describe('Booking Application E2E', () => {
 	}, 30000);
 
 	it('should open booking drawer when time slot is clicked', async () => {
-		const page = stagehand.context.pages()[0];
+		const page = stagehand.context.pages()[0] as Page;
 		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
 
 		// Select date and time slot
 		await helpers.clickAvailableDate(stagehand);
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		
+		// Wait for time slots to appear - polls and exits as soon as condition is met
+		await waitForCondition(page, () => {
+			const buttons = Array.from(document.querySelectorAll('button'));
+			return buttons.some((b) => b.textContent && /\d+:\d+/.test(b.textContent));
+		});
+		
 		await helpers.clickTimeSlot(stagehand);
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		
+		// Wait for drawer/form to appear - polls and exits as soon as condition is met
+		await waitForCondition(page, () => {
+			const nameInput = document.querySelector('input[type="text"]');
+			return nameInput !== null && window.getComputedStyle(nameInput).display !== 'none';
+		});
 
 		// Check if drawer is visible
 		const drawerVisible = await helpers.isDrawerVisible(stagehand);
@@ -224,7 +261,7 @@ describe('Booking Application E2E', () => {
 	}, 30000);
 
 	it('should handle month navigation', async () => {
-		const page = stagehand.context.pages()[0];
+		const page = stagehand.context.pages()[0] as Page;
 		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
 
 		// Get current month - it's in an h2 element
@@ -234,7 +271,19 @@ describe('Booking Application E2E', () => {
 
 		// Navigate to next month
 		await helpers.clickNextMonth(stagehand);
-		await new Promise((resolve) => setTimeout(resolve, 1500));
+		
+		// Wait for month text to change - polls and exits as soon as condition is met
+		const startTime = Date.now();
+		const timeout = 10000;
+		while (Date.now() - startTime < timeout) {
+			const newMonthText = await page.evaluate(() => {
+				return document.querySelector('h2')?.textContent;
+			});
+			if (newMonthText !== monthText && newMonthText !== null) {
+				break;
+			}
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
 
 		// Verify month changed
 		const newMonthText = await page.evaluate(() => {
