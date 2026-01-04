@@ -15,7 +15,9 @@ import type { Page } from 'playwright';
  */
 
 const USE_AI_ACTIONS = process.env.USE_AI_ACTIONS === 'true';
-const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
+const BASE_URL = process.env.BASE_URL && process.env.BASE_URL.startsWith('http') 
+	? process.env.BASE_URL 
+	: 'http://localhost:5173';
 
 /**
  * Helper function to wait for a condition to be true

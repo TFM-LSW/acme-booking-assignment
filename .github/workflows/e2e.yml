@@ -1,11 +1,5 @@
 name: E2E Tests
 
-env:
-  # Optional: Uncomment to enable AI-powered tests
-  # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
-  NODE_ENV: test
-  BASE_URL: http://localhost:5173
-
 on:
   pull_request:
   push:
@@ -40,9 +34,11 @@ jobs:
       - name: Run E2E tests
         run: pnpm test:e2e:ci
         env:
+          # BASE_URL is set by the test:e2e:ci script
           # Optional: Uncomment to enable AI-powered tests
           # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
           NODE_ENV: test
+          BASE_URL: http://localhost:5173
 
       - name: Upload test results
         if: failure()

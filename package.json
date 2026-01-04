@@ -19,13 +19,12 @@
 		"test:e2e": "vitest run --config vitest.e2e.config.ts",
 		"test:e2e:ui": "vitest --ui --config vitest.e2e.config.ts",
 		"test:e2e:ai": "USE_AI_ACTIONS=true vitest run --config vitest.e2e.config.ts",
-		"test:e2e:ci": "concurrently -k -s first \"vite dev\" \"vitest run --config vitest.e2e.config.ts\""
+		"test:e2e:ci": "concurrently -k -s first \"vite dev --port 5173\" \"wait-on http://localhost:5173 && BASE_URL=http://localhost:5173 vitest run --config vitest.e2e.config.ts\""
 	},
 	"devDependencies": {
 		"@browserbasehq/stagehand": "^3.0.6",
 		"@internationalized/date": "^3.10.0",
 		"@lucide/svelte": "^0.544.0",
-		"concurrently": "^9.1.0",
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/kit": "^2.49.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
@@ -39,6 +38,7 @@
 		"@vitest/ui": "^4.0.16",
 		"bits-ui": "^2.14.4",
 		"clsx": "^2.1.1",
+		"concurrently": "^9.1.0",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.1",
@@ -57,6 +57,7 @@
 		"typescript": "^5.9.3",
 		"vite": "^7.2.6",
 		"vitest": "^4.0.16",
+		"wait-on": "^9.0.3",
 		"zod": "^4.2.1"
 	},
 	"dependencies": {
