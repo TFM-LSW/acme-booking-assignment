@@ -2,6 +2,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { EXTERNAL_API_BASE_URL, EXTERNAL_API_MEETINGS_PATH } from '$env/static/private';
 
+// Runtime validation of required environment variables
+if (!EXTERNAL_API_BASE_URL || !EXTERNAL_API_MEETINGS_PATH) {
+	throw new Error(
+		'Missing required environment variables: EXTERNAL_API_BASE_URL and/or EXTERNAL_API_MEETINGS_PATH. ' +
+		'Please check your .env file.'
+	);
+}
+
 interface Attendee {
 	email: string;
 	name: string | null;

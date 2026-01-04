@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { PUBLIC_API_BASE_URL, PUBLIC_API_AVAILABILITY_PATH } from '$env/static/public';
+import { config } from '$lib/config';
 import { format, isValid, parseISO, isBefore, isAfter, startOfToday } from 'date-fns';
 import { redirect } from '@sveltejs/kit';
 
@@ -92,8 +92,8 @@ export const load: PageLoad = async ({ fetch, url }) => {
 		throw redirect(302, `/bookings?start=${startDate}&end=${endDate}`);
 	}
 
-	// Fetch availability from API
-	const apiUrl = `${PUBLIC_API_BASE_URL}${PUBLIC_API_AVAILABILITY_PATH}?start=${startDate}&end=${endDate}`;
+	// Fetch availability from API using centralized config
+	const apiUrl = `${config.getApiUrl(config.api.paths.availability)}?start=${startDate}&end=${endDate}`;
 	const response = await fetch(apiUrl);
 
 	if (!response.ok) {

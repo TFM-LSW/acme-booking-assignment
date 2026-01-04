@@ -2,6 +2,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { EXTERNAL_API_BASE_URL, EXTERNAL_API_AVAILABILITY_PATH } from '$env/static/private';
 
+// Runtime validation of required environment variables
+if (!EXTERNAL_API_BASE_URL || !EXTERNAL_API_AVAILABILITY_PATH) {
+	throw new Error(
+		'Missing required environment variables: EXTERNAL_API_BASE_URL and/or EXTERNAL_API_AVAILABILITY_PATH. ' +
+		'Please check your .env file.'
+	);
+}
+
 /**
  * Proxy endpoint for fetching availability data.
  * Forwards requests to external API while keeping API URLs secure server-side.
