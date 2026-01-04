@@ -209,7 +209,7 @@ Testing setup includes:
 # Run unit and component tests
 pnpm test:run
 
-# Run e2e tests (requires API key - see below)
+# Run e2e tests (no API key required)
 pnpm test:e2e
 
 # Run e2e tests in UI mode
@@ -219,7 +219,7 @@ pnpm test:e2e:ui
 ./scripts/run-e2e-tests.sh
 ```
 
-**E2E Testing Setup**: E2E tests require an AI API key (Google Gemini recommended - free tier available). See [E2E Testing README](./src/tests/e2e/README.md) for setup instructions.
+**E2E Testing Setup**: E2E tests run in standard mode by default (no API key required). For AI-powered mode using natural language actions, an API key is needed (Google Gemini recommended - free tier available). See [E2E Testing README](./src/tests/e2e/README.md) for setup instructions.
 
 Future improvements:
 
