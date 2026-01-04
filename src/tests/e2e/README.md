@@ -90,7 +90,19 @@ BROWSERBASE_PROJECT_ID=your_project_id_here
 
 ## Running Tests
 
-**⚠️ Important: Start dev server first!**
+### Option 1: Automated (Recommended for CI/CD)
+
+Runs dev server and tests together automatically:
+
+```bash
+pnpm test:e2e:ci
+```
+
+This uses `concurrently` to start the dev server, wait for it to be ready, run tests, and cleanup.
+
+### Option 2: Manual (For Development)
+
+Run in separate terminals for better control:
 
 ```bash
 # Terminal 1 - Start dev server
