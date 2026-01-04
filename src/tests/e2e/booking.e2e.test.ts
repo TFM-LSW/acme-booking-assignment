@@ -21,7 +21,7 @@ const USE_AI_ACTIONS = process.env.USE_AI_ACTIONS === 'true';
  * This polls the condition and returns as soon as it's met, rather than waiting a fixed duration
  */
 async function waitForCondition(
-	page: any,
+	page: Page,
 	condition: () => boolean | Promise<boolean>,
 	options: { timeout?: number; pollInterval?: number } = {}
 ): Promise<void> {
@@ -272,11 +272,12 @@ describe('Booking Application E2E', () => {
 		// Navigate to next month
 		await helpers.clickNextMonth(stagehand);
 		
-		// Wait for month text to change - polls and exits as soon as condition is met
+		// Wait for month text to change - check multiple times until it changes
+		let newMonthText = monthText;
 		const startTime = Date.now();
 		const timeout = 10000;
-		while (Date.now() - startTime < timeout) {
-			const newMonthText = await page.evaluate(() => {
+		while (newMonthText === monthText && Date.now() - startTime < timeout) {
+			newMonthText = await page.evaluate(() => {
 				return document.querySelector('h2')?.textContent;
 			});
 			if (newMonthText !== monthText && newMonthText !== null) {
@@ -286,9 +287,6 @@ describe('Booking Application E2E', () => {
 		}
 
 		// Verify month changed
-		const newMonthText = await page.evaluate(() => {
-			return document.querySelector('h2')?.textContent;
-		});
 		expect(newMonthText).not.toBe(monthText);
 		expect(newMonthText).toBeTruthy();
 	}, 30000);
