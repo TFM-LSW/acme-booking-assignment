@@ -19,6 +19,9 @@ const BASE_URL = process.env.BASE_URL && process.env.BASE_URL.startsWith('http')
 	? process.env.BASE_URL 
 	: 'http://localhost:5173';
 
+// Constants for test timing
+const ANIMATION_WAIT_MS = 500; // Wait time for animations to complete
+
 /**
  * Helper function to wait for a condition to be true
  * This polls the condition and returns as soon as it's met, rather than waiting a fixed duration
@@ -227,7 +230,7 @@ describe('Booking Application E2E', () => {
 				document.querySelector('[role="grid"]') ||
 				document.querySelector('.calendar') ||
 				Array.from(document.querySelectorAll('button')).some(b => 
-					b.textContent && /^\d+$/.test(b.textContent.trim())
+					b.textContent && /^\d{1,2}$/.test(b.textContent.trim())
 				)
 			);
 		});
@@ -244,7 +247,7 @@ describe('Booking Application E2E', () => {
 
 		// Wait for calendar to fully load
 		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
-		await page.waitForTimeout(500); // Allow any animations to complete
+		await page.waitForTimeout(ANIMATION_WAIT_MS); // Allow any animations to complete
 
 		// Click available date using helper
 		await helpers.clickAvailableDate(stagehand);
@@ -266,7 +269,7 @@ describe('Booking Application E2E', () => {
 
 		// Wait for calendar to fully load
 		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(ANIMATION_WAIT_MS);
 
 		// Select date and time slot
 		await helpers.clickAvailableDate(stagehand);
@@ -301,7 +304,7 @@ describe('Booking Application E2E', () => {
 
 		// Wait for calendar to fully load
 		await page.waitForSelector('button:not([disabled])', { timeout: 5000 });
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(ANIMATION_WAIT_MS);
 
 		// Get current month - it's in an h2 element
 		const monthText = await page.evaluate(() => {
