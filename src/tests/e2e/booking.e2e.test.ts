@@ -5,16 +5,17 @@ import { stagehandConfig } from './stagehand.config';
 import type { Page } from 'playwright';
 /**
  * End-to-end tests for the booking application
- * 
+ *
  * Supports two modes:
  * - USE_AI_ACTIONS=false: Fast, quota-free Playwright selectors (default)
  * - USE_AI_ACTIONS=true: AI-powered natural language actions (requires API key)
- * 
+ *
  * Toggle via environment variable:
  * USE_AI_ACTIONS=true pnpm test:e2e
  */
 
 const USE_AI_ACTIONS = process.env.USE_AI_ACTIONS === 'true';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
 
 /**
  * Helper function to wait for a condition to be true
@@ -27,13 +28,13 @@ async function waitForCondition(
 ): Promise<void> {
 	const { timeout = 10000, pollInterval = 100 } = options;
 	const startTime = Date.now();
-	
+
 	while (Date.now() - startTime < timeout) {
 		const result = await page.evaluate(condition);
 		if (result) return;
 		await new Promise((resolve) => setTimeout(resolve, pollInterval));
 	}
-	
+
 	throw new Error(`Timeout waiting for condition after ${timeout}ms`);
 }
 
@@ -114,8 +115,7 @@ const helpers = {
 			const page = stagehand.context.pages()[0];
 			return await page.evaluate(() => {
 				const buttons = Array.from(document.querySelectorAll('button'));
-				return buttons.filter((b) => b.textContent && /^\d+$/.test(b.textContent.trim()))
-					.length;
+				return buttons.filter((b) => b.textContent && /^\d+$/.test(b.textContent.trim())).length;
 			});
 		}
 	},
@@ -189,7 +189,7 @@ describe('Booking Application E2E', () => {
 
 	it('should load the booking page successfully', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
+		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		const heading = await helpers.getHeading(stagehand);
 		expect(heading).toBeTruthy();
@@ -198,7 +198,7 @@ describe('Booking Application E2E', () => {
 
 	it('should display calendar and allow date selection', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
+		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Check calendar grid is visible
 		const hasCalendar = await page.evaluate(() => {
@@ -213,11 +213,11 @@ describe('Booking Application E2E', () => {
 
 	it('should show time slots when a date is selected', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
+		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Click available date using helper
 		await helpers.clickAvailableDate(stagehand);
-		
+
 		// Wait for time slots to appear - polls and exits as soon as condition is met
 		await waitForCondition(page, () => {
 			const buttons = Array.from(document.querySelectorAll('button'));
@@ -231,19 +231,19 @@ describe('Booking Application E2E', () => {
 
 	it('should open booking drawer when time slot is clicked', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
+		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Select date and time slot
 		await helpers.clickAvailableDate(stagehand);
-		
+
 		// Wait for time slots to appear - polls and exits as soon as condition is met
 		await waitForCondition(page, () => {
 			const buttons = Array.from(document.querySelectorAll('button'));
 			return buttons.some((b) => b.textContent && /\d+:\d+/.test(b.textContent));
 		});
-		
+
 		await helpers.clickTimeSlot(stagehand);
-		
+
 		// Wait for drawer/form to appear - polls and exits as soon as condition is met
 		await waitForCondition(page, () => {
 			const nameInput = document.querySelector('input[type="text"]');
@@ -262,7 +262,7 @@ describe('Booking Application E2E', () => {
 
 	it('should handle month navigation', async () => {
 		const page = stagehand.context.pages()[0] as Page;
-		await page.goto('http://localhost:5173/bookings', { waitUntil: 'networkidle' });
+		await page.goto(`${BASE_URL}/bookings`, { waitUntil: 'networkidle' });
 
 		// Get current month - it's in an h2 element
 		const monthText = await page.evaluate(() => {
@@ -271,7 +271,7 @@ describe('Booking Application E2E', () => {
 
 		// Navigate to next month
 		await helpers.clickNextMonth(stagehand);
-		
+
 		// Wait for month text to change - check multiple times until it changes
 		let newMonthText = monthText;
 		const startTime = Date.now();

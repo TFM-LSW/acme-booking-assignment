@@ -86,6 +86,10 @@ ANTHROPIC_API_KEY=your_key_here
 # Optional: For cloud browser testing
 BROWSERBASE_API_KEY=your_key_here
 BROWSERBASE_PROJECT_ID=your_project_id_here
+
+# Optional: Base URL for E2E tests (defaults to http://localhost:5173)
+# Use this to test against different ports or deployment environments
+BASE_URL=http://localhost:5173
 ```
 
 ## Running Tests
