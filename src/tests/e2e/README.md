@@ -89,7 +89,7 @@ BROWSERBASE_PROJECT_ID=your_project_id_here
 
 # Optional: Base URL for E2E tests (defaults to http://localhost:5173)
 # Use this to test against different ports or deployment environments
-E2E_BASE_URL=http://localhost:5173
+BASE_URL=http://localhost:5173
 ```
 
 ## Running Tests

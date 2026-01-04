@@ -1,5 +1,11 @@
 name: E2E Tests
 
+env:
+  # Optional: Uncomment to enable AI-powered tests
+  # GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_AI_KEY }}
+  NODE_ENV: test
+  BASE_URL: http://localhost:5173
+
 on:
   pull_request:
   push:
