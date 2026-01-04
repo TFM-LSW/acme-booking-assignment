@@ -19,12 +19,12 @@ The application now uses a centralized configuration module (`src/lib/config.ts`
 import { config } from '$lib/config';
 
 // Access API configuration
-config.api.baseUrl              // Base URL for API calls (empty for relative paths)
-config.api.paths.availability   // Availability endpoint path
-config.api.paths.bookings       // Bookings endpoint path
+config.api.baseUrl; // Base URL for API calls (empty for relative paths)
+config.api.paths.availability; // Availability endpoint path
+config.api.paths.bookings; // Bookings endpoint path
 
 // Build full API URLs
-config.getApiUrl(config.api.paths.bookings)
+config.getApiUrl(config.api.paths.bookings);
 ```
 
 ## Usage Examples
@@ -36,12 +36,12 @@ config.getApiUrl(config.api.paths.bookings)
 import { config } from '$lib/config';
 
 export async function createBooking(data: CreateBookingRequest) {
-    const url = config.getApiUrl(config.api.paths.bookings);
-    const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(data)
-    });
-    return response.json();
+	const url = config.getApiUrl(config.api.paths.bookings);
+	const response = await fetch(url, {
+		method: 'POST',
+		body: JSON.stringify(data)
+	});
+	return response.json();
 }
 ```
 
@@ -52,9 +52,9 @@ export async function createBooking(data: CreateBookingRequest) {
 import { config } from '$lib/config';
 
 export const load = async ({ fetch }) => {
-    const apiUrl = `${config.getApiUrl(config.api.paths.availability)}?start=${start}&end=${end}`;
-    const response = await fetch(apiUrl);
-    return await response.json();
+	const apiUrl = `${config.getApiUrl(config.api.paths.availability)}?start=${start}&end=${end}`;
+	const response = await fetch(apiUrl);
+	return await response.json();
 };
 ```
 
@@ -68,13 +68,13 @@ import { EXTERNAL_API_BASE_URL, EXTERNAL_API_AVAILABILITY_PATH } from '$env/stat
 
 // Runtime validation ensures env vars are defined
 if (!EXTERNAL_API_BASE_URL || !EXTERNAL_API_AVAILABILITY_PATH) {
-    throw new Error('Missing required environment variables. Please check your .env file.');
+	throw new Error('Missing required environment variables. Please check your .env file.');
 }
 ```
 
 ## Environment Variables
 
-### Client-Side (PUBLIC_ prefix)
+### Client-Side (PUBLIC\_ prefix)
 
 These are exposed to the browser:
 
@@ -114,9 +114,9 @@ The configuration module safely handles various "undefined" scenarios:
 ```typescript
 import { PUBLIC_API_BASE_URL, PUBLIC_API_BOOKINGS_PATH } from '$env/static/public';
 
-const url = PUBLIC_API_BASE_URL 
-    ? `${PUBLIC_API_BASE_URL}${PUBLIC_API_BOOKINGS_PATH}`
-    : PUBLIC_API_BOOKINGS_PATH;
+const url = PUBLIC_API_BASE_URL
+	? `${PUBLIC_API_BASE_URL}${PUBLIC_API_BOOKINGS_PATH}`
+	: PUBLIC_API_BOOKINGS_PATH;
 ```
 
 ### After
@@ -155,6 +155,7 @@ BASE_URL=http://localhost:5173 pnpm test:e2e
 ### Client-Side
 
 If environment variables are undefined, the config module uses sensible defaults:
+
 - `baseUrl`: Empty string (relative paths)
 - `paths.availability`: `/api/availability`
 - `paths.bookings`: `/api/bookings`
@@ -164,7 +165,7 @@ If environment variables are undefined, the config module uses sensible defaults
 Server endpoints throw descriptive errors if required environment variables are missing:
 
 ```
-Error: Missing required environment variables: EXTERNAL_API_BASE_URL and/or EXTERNAL_API_MEETINGS_PATH. 
+Error: Missing required environment variables: EXTERNAL_API_BASE_URL and/or EXTERNAL_API_MEETINGS_PATH.
 Please check your .env file.
 ```
 
