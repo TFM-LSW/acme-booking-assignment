@@ -11,11 +11,13 @@
 		selectedDate: string;
 		/** Set of dates (YYYY-MM-DD) that have availability */
 		datesWithAvailability: Set<string>;
+		/** The date with a confirmed booking in YYYY-MM-DD format, or null */
+		bookedDate?: string | null;
 		/** Callback when a date is selected */
 		onDateSelect: (date: string) => void;
 	}
 
-	let { selectedDate, datesWithAvailability, onDateSelect }: Props = $props();
+	let { selectedDate, datesWithAvailability, bookedDate, onDateSelect }: Props = $props();
 
 	/**
 	 * Gets the week of dates containing the selected date.
@@ -62,6 +64,7 @@
 					hasAvailability={day.hasAvailability}
 					isPast={day.isPast}
 					isToday={day.isToday}
+					isBooked={bookedDate === day.dateStr}
 					onSelect={onDateSelect}
 					variant="condensed"
 				/>

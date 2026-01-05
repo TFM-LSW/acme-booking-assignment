@@ -13,6 +13,7 @@ describe('CalendarDayButton', () => {
 				hasAvailability: false,
 				isPast: false,
 				isToday: false,
+				isBooked: false,
 				onSelect: () => {},
 				variant: 'full'
 			}
@@ -30,6 +31,7 @@ describe('CalendarDayButton', () => {
 				hasAvailability: false,
 				isPast: true,
 				isToday: false,
+				isBooked: false,
 				onSelect: () => {},
 				variant: 'full'
 			}
@@ -47,6 +49,7 @@ describe('CalendarDayButton', () => {
 				hasAvailability: true,
 				isPast: false,
 				isToday: false,
+				isBooked: false,
 				onSelect: () => {},
 				variant: 'full'
 			}
@@ -54,5 +57,64 @@ describe('CalendarDayButton', () => {
 
 		const button = screen.getByRole('button');
 		expect(button).toHaveClass('bg-primary');
+	});
+
+	it('applies booked styles when isBooked is true', () => {
+		render(CalendarDayButton, {
+			props: {
+				dateStr: '2025-12-18',
+				label: 18,
+				isSelected: false,
+				hasAvailability: true,
+				isPast: false,
+				isToday: false,
+				isBooked: true,
+				onSelect: () => {},
+				variant: 'full'
+			}
+		});
+
+		const button = screen.getByRole('button');
+		expect(button).toHaveClass('bg-green-50');
+		expect(button).toHaveClass('text-green-600');
+	});
+
+	it('disables button when date is booked', () => {
+		render(CalendarDayButton, {
+			props: {
+				dateStr: '2025-12-18',
+				label: 18,
+				isSelected: false,
+				hasAvailability: true,
+				isPast: false,
+				isToday: false,
+				isBooked: true,
+				onSelect: () => {},
+				variant: 'full'
+			}
+		});
+
+		expect(screen.getByRole('button')).toHaveAttribute('disabled');
+	});
+
+	it('booked state takes precedence over selected state', () => {
+		render(CalendarDayButton, {
+			props: {
+				dateStr: '2025-12-18',
+				label: 18,
+				isSelected: true,
+				hasAvailability: true,
+				isPast: false,
+				isToday: false,
+				isBooked: true,
+				onSelect: () => {},
+				variant: 'full'
+			}
+		});
+
+		const button = screen.getByRole('button');
+		// Should have booked styles, not selected styles
+		expect(button).toHaveClass('bg-green-50');
+		expect(button).not.toHaveClass('bg-primary');
 	});
 });

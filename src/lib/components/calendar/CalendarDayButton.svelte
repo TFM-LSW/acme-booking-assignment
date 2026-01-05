@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Atomic component for a calendar day button.
-	 * Handles visual states for selected, available, past, and today.
+	 * Handles visual states for selected, available, past, today, and booked.
 	 */
 	interface Props {
 		/** The date string (YYYY-MM-DD) */
@@ -18,6 +18,8 @@
 		isPast: boolean;
 		/** Whether this is today */
 		isToday: boolean;
+		/** Whether this date has a confirmed booking */
+		isBooked?: boolean;
 		/** Callback when clicked */
 		onSelect: (dateStr: string) => void;
 		/** Variant: full (square) or condensed (rectangular with labels) */
@@ -32,16 +34,17 @@
 		hasAvailability,
 		isPast,
 		isToday,
+		isBooked = false,
 		onSelect,
 		variant = 'full'
 	}: Props = $props();
 
 	/**
 	 * Handles click event on the date button.
-	 * Only triggers onSelect if date has availability and is not in the past.
+	 * Only triggers onSelect if date has availability, is not in the past, and is not booked.
 	 */
 	function handleClick() {
-		if (hasAvailability && !isPast) {
+		if (hasAvailability && !isPast && !isBooked) {
 			onSelect(dateStr);
 		}
 	}
@@ -49,13 +52,15 @@
 	/** Base styling classes applied to all button states */
 	let baseClasses = 'relative rounded-lg p-3 transition-all font-medium';
 
-	/** Dynamic classes based on button state (selected, available, disabled) */
+	/** Dynamic classes based on button state (selected, available, disabled, booked) */
 	let stateClasses = $derived(
-		isSelected
-			? 'bg-primary text-primary-foreground hover:bg-primary/90'
-			: hasAvailability && !isPast
-				? 'bg-accent/30 border-accent hover:bg-accent hover:border-primary cursor-pointer border'
-				: 'text-muted-foreground/40 cursor-not-allowed'
+		isBooked
+			? 'bg-green-50 text-green-600 border-green-200 border cursor-default font-semibold'
+			: isSelected
+				? 'bg-primary text-primary-foreground hover:bg-primary/90'
+				: hasAvailability && !isPast
+					? 'bg-accent/30 border-accent hover:bg-accent hover:border-primary cursor-pointer border'
+					: 'text-muted-foreground/40 cursor-not-allowed'
 	);
 
 	/** Layout classes based on variant (full calendar vs condensed week view) */
@@ -66,7 +71,7 @@
 
 <button
 	onclick={handleClick}
-	disabled={!hasAvailability || isPast}
+	disabled={!hasAvailability || isPast || isBooked}
 	class="{baseClasses} {stateClasses} {variantClasses}"
 >
 	{#if variant === 'condensed' && secondaryLabel}

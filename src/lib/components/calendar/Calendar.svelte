@@ -21,11 +21,14 @@
 		datesWithAvailability: Set<string>;
 		/** Currently selected date in YYYY-MM-DD format, or null */
 		selectedDate: string | null;
+		/** The date with a confirmed booking in YYYY-MM-DD format, or null */
+		bookedDate?: string | null;
 		/** Callback when a date is selected */
 		onDateSelect: (date: string) => void;
 	}
 
-	let { currentMonth, datesWithAvailability, selectedDate, onDateSelect }: Props = $props();
+	let { currentMonth, datesWithAvailability, selectedDate, bookedDate, onDateSelect }: Props =
+		$props();
 
 	/** Today's date in YYYY-MM-DD format for highlighting */
 	let today = $derived(format(new Date(), 'yyyy-MM-dd'));
@@ -120,6 +123,7 @@
 					hasAvailability={day.hasAvailability}
 					isPast={day.isPast}
 					isToday={day.isToday}
+					isBooked={bookedDate === day.date}
 					onSelect={(date) => selectDate(date, day.hasAvailability, day.isPast)}
 					variant="full"
 				/>

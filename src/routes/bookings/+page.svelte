@@ -155,6 +155,12 @@
 	let datesWithAvailability = $derived(getDatesWithAvailability(data.availability));
 
 	/**
+	 * The date of the confirmed booking in YYYY-MM-DD format.
+	 * Used to highlight the booked day in the calendar.
+	 */
+	let bookedDate = $derived(confirmedMeeting ? format(confirmedMeeting.start, 'yyyy-MM-dd') : null);
+
+	/**
 	 * Array of 30-minute time slots for the currently selected date.
 	 * Slots are aligned to :00 or :30 minute boundaries.
 	 */
@@ -391,6 +397,7 @@
 						{currentMonth}
 						{datesWithAvailability}
 						{selectedDate}
+						{bookedDate}
 						onDateSelect={handleDateSelect}
 					/>
 				</div>
@@ -403,6 +410,7 @@
 							<CondensedCalendar
 								{selectedDate}
 								{datesWithAvailability}
+								{bookedDate}
 								onDateSelect={handleDateSelect}
 							/>
 						{/if}
