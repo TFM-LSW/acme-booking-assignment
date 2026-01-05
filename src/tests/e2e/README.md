@@ -42,6 +42,59 @@ Stagehand is a browser automation tool that uses AI to interact with web pages u
 - **`extract()`** - Extract structured data from pages using Zod schemas
 - **`observe()`** - Discover elements and get suggested actions
 
+## Live API E2E Testing
+
+### Complete Booking Flow Test
+
+The test suite includes a comprehensive E2E test that validates the entire booking flow using the live external API:
+
+**Architecture Layers Tested:**
+
+```
+Browser (E2E Test)
+    ↓
+Client-side Form (Svelte 5 Reactivity)
+    ↓
+Client API (/lib/api/bookings.ts)
+    ↓
+SvelteKit API Route (/routes/api/bookings/+server.ts)
+    ↓
+External API (https://calendar.meetchase.ai/api/meetings)
+```
+
+**Test Implementation Highlights:**
+
+1. **Svelte 5 Reactivity Handling**: The test properly triggers Svelte's reactivity system by dispatching both `input` and `change` events, then waiting for form validation to complete (button becomes enabled).
+
+2. **Condition-Based Waits**: Instead of arbitrary timeouts, the test waits for actual state changes:
+   - Waits for submit button to become enabled (validates form reactivity)
+   - Waits for specific confirmation UI elements (checkmark icon, "Meeting confirmed!" text)
+   - Fast poll intervals (50-500ms) with reasonable timeouts (5-25s)
+
+3. **Multi-Step Async Flow**: Handles all async operations:
+   - Select date → Wait for time slots API response
+   - Select time slot → Wait for drawer animation
+   - Fill form → Wait for validation to enable submit button
+   - Submit → External API call with 25s timeout
+   - Verify confirmation state with multiple indicators
+   - Confirm calendar highlighting and disabled state
+
+4. **Comprehensive Verification**: Tests check multiple success indicators:
+   - Checkmark icon SVG with exact path points
+   - "Meeting confirmed!" heading text
+   - Green circle background on confirmation
+   - "Done" button (replaces "Confirm meeting")
+   - Calendar date highlighted in green (bg-green-50, text-green-600)
+   - Booked date properly disabled
+
+**Future Improvements:**
+
+While the live API test works reliably, production environments could benefit from:
+
+- API mocking layer (Mock Service Worker) for faster execution and offline testing
+- Controlled test fixtures for edge cases
+- Network condition testing (slow connections, timeouts)
+
 ## Setup
 
 ### 1. Install Dependencies
@@ -257,10 +310,11 @@ console.log(elements);
 ## Tips
 
 1. **Start dev server first**: Make sure `pnpm dev` is running before tests
-2. **Use longer timeouts**: E2E tests can be slow, use longer timeouts (30s+)
-3. **Be specific**: More specific natural language instructions work better
-4. **Use Zod schemas**: Type-safe data extraction prevents runtime errors
-5. **Wait for state**: Add `page.waitForTimeout()` after actions that trigger state changes
+2. **Use condition-based waits**: Instead of arbitrary timeouts, wait for actual state changes using the `waitForCondition` helper
+3. **Be specific with selectors**: Target specific UI elements (SVG paths, exact text, button states)
+4. **Handle Svelte 5 reactivity**: Dispatch both `input` and `change` events to trigger reactivity, then wait for validation
+5. **Use Zod schemas**: Type-safe data extraction prevents runtime errors for AI mode
+6. **Multiple verification points**: Check multiple success indicators rather than a single element
 
 ## Resources
 

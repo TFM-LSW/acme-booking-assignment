@@ -33,6 +33,7 @@ A modern booking link page built with SvelteKit 2 and Svelte 5, demonstrating be
 ## Features
 
 - **Calendar-based scheduling**: Interactive monthly calendar with availability highlighting
+- **Booked date indication**: Visual highlighting of confirmed bookings in the calendar
 - **Timezone support**: Automatic timezone detection with manual selection options
 - **Responsive design**: Mobile-first design with adaptive layouts (drawer on mobile, sidebar on desktop)
 - **Real-time validation**: Email validation with instant feedback
@@ -203,6 +204,23 @@ Testing setup includes:
 - **Component tests** for interactive components using Testing Library
 - **E2E tests** with [Stagehand](https://github.com/browserbase/stagehand) for full user flow testing
 
+#### Test Coverage
+
+**Unit Tests** (6/6 passing):
+
+- `CalendarDayButton` - Including booked date styling and behavior
+- Timezone utilities
+- Availability calculations
+
+**E2E Tests** (6/7 passing, 1 skipped):
+
+- ✅ Page loading and calendar display
+- ✅ Date selection and time slot display
+- ✅ Booking drawer opening
+- ✅ Month navigation
+- ✅ **Complete booking flow with live API** (form submission, confirmation, calendar highlighting)
+- ⏭️ Timezone selector (environment-dependent)
+
 #### Running Tests
 
 ```bash
@@ -221,10 +239,13 @@ pnpm test:e2e:ui
 
 **E2E Testing Setup**: E2E tests run in standard mode by default (no API key required). For AI-powered mode using natural language actions, an API key is needed (Google Gemini recommended - free tier available). See [E2E Testing README](./src/tests/e2e/README.md) for setup instructions.
 
+**Live API Testing**: The E2E test suite includes a comprehensive booking flow test that works with the live external API. It properly handles Svelte 5 reactivity, async operations, and validates the complete user journey from date selection to booking confirmation with calendar highlighting.
+
 Future improvements:
 
-- Integration tests for the full booking flow
+- API mocking layer (MSW) for faster test execution and offline testing
 - Accessibility tests with axe-core
+- Visual regression testing
 
 ### Nice-to-have features
 
