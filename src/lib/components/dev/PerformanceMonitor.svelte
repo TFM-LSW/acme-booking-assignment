@@ -48,7 +48,7 @@
 
 {#if showMonitor}
 	<div
-		class="fixed bottom-4 right-4 z-[9999] w-[600px] rounded-lg border-2 border-blue-500 bg-gray-900 p-4 font-mono text-xs text-white shadow-2xl"
+		class="fixed right-4 bottom-4 z-[9999] w-[600px] rounded-lg border-2 border-blue-500 bg-gray-900 p-4 font-mono text-xs text-white shadow-2xl"
 	>
 		<div class="mb-3 flex items-center justify-between">
 			<div class="flex items-center gap-2">
