@@ -14,7 +14,6 @@
 		lastDayOfMonth,
 		isAfter
 	} from 'date-fns';
-	import { formatInTimeZone } from 'date-fns-tz';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { detectUserTimezone } from '$lib/timezones';
@@ -27,6 +26,7 @@
 	import { getDatesWithAvailability, generateThirtyMinuteSlots } from '$lib/utils/availability';
 	import { intersectionObserver } from '$lib/utils/actions';
 	import { createBooking } from '$lib/api/bookings';
+	import { formatSelectedDate, formatTime } from '$lib/utils/date-format';
 
 	let { data = $bindable() }: { data: PageData } = $props();
 
@@ -169,15 +169,6 @@
 	);
 
 	/**
-	 * Formats a YYYY-MM-DD date string as a human-readable string.
-	 * @param dateStr - Date string in YYYY-MM-DD format
-	 * @returns Formatted date string (e.g., "Wednesday 17th")
-	 */
-	function formatSelectedDate(dateStr: string): string {
-		return format(parseISO(dateStr), 'EEEE do');
-	}
-
-	/**
 	 * Handles date selection from the calendar component.
 	 * @param date - Selected date in YYYY-MM-DD format
 	 */
@@ -304,12 +295,12 @@
 						</div>
 						<div class="border-border mt-3 border-t pt-3">
 							<p class="text-foreground text-sm font-medium">
-								{formatInTimeZone(confirmedMeeting.start, selectedTimezone, 'h:mm a').toLowerCase()}
+								{formatTime(confirmedMeeting.start, selectedTimezone)}
 								-
-								{formatInTimeZone(confirmedMeeting.end, selectedTimezone, 'h:mm a').toLowerCase()}
+								{formatTime(confirmedMeeting.end, selectedTimezone)}
 							</p>
 							<p class="text-muted-foreground mt-1 text-xs">
-								{formatInTimeZone(confirmedMeeting.start, selectedTimezone, 'EEEE, MMMM d, yyyy')}
+								{format(confirmedMeeting.start, 'EEEE, MMMM d, yyyy')}
 							</p>
 						</div>
 					</div>
