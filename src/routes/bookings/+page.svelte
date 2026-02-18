@@ -15,7 +15,7 @@
 		isAfter
 	} from 'date-fns';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { detectUserTimezone } from '$lib/timezones';
 	import {
 		parseOffsetFromTimestamp,
@@ -126,7 +126,7 @@
 	 * Uses date-fns startOfMonth() to ensure consistent first-of-month dates.
 	 */
 	let currentMonth = $derived.by(() => {
-		const startParam = $page.url.searchParams.get('start');
+		const startParam = page.url.searchParams.get('start');
 
 		if (startParam) {
 			// Parse YYYY-MM-DD format and get start of month
