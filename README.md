@@ -128,6 +128,13 @@ pnpm dev
 - **Svelte 5 runes**: Modern reactive state with `$state`, `$derived`, `$effect`
 - **Derived values**: Computed state with `$derived` and `$derived.by()`
 - **Effect cleanup**: Proper cleanup in `$effect` for subscriptions
+- **Kit state API**: Use `$app/state` (not deprecated `$app/stores`) for route state
+
+### Svelte syntax conventions (latest)
+
+- Use rune-based APIs (`$props`, `$state`, `$derived`, `$effect`) instead of legacy reactive syntax
+- Use property-style event handlers (`onclick`, `onkeydown`, etc.) instead of `on:event` directives
+- Prefer snippets (`{#snippet ...}` / `{@render ...}`) for composable component content
 
 ### Data flow
 

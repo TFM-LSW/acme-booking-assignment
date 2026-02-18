@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatInTimeZone } from 'date-fns-tz';
+	import { formatTime, formatFullDate } from '$lib/utils/date-format';
 	import Drawer from '$lib/components/ui/Drawer.svelte';
 
 	interface TimeSlot {
@@ -136,27 +136,6 @@
 			isSubmitting = false;
 		}
 	}
-
-	/**
-	 * Format time in the user's selected timezone
-	 */
-	function formatSelectedTime(date: Date): string {
-		return formatInTimeZone(date, timezone, 'h:mm a').toLowerCase();
-	}
-
-	/**
-	 * Format date in the user's selected timezone
-	 */
-	function formatSelectedDate(date: Date): string {
-		return formatInTimeZone(date, timezone, 'EEEE, MMMM d, yyyy');
-	}
-
-	/**
-	 * Format time in user's local timezone (for conversion helper)
-	 */
-	function formatLocalTime(date: Date): string {
-		return formatInTimeZone(date, localTimezone, 'h:mm a').toLowerCase();
-	}
 </script>
 
 <Drawer {open} title="Confirm meeting" {onClose}>
@@ -169,10 +148,10 @@
 						Selected Time
 					</p>
 					<p class="text-3xl font-semibold">
-						{formatSelectedTime(slot.start)} - {formatSelectedTime(slot.end)}
+						{formatTime(slot.start, timezone)} - {formatTime(slot.end, timezone)}
 					</p>
 					<p class="text-foreground mt-2 text-base">
-						{formatSelectedDate(slot.start)}
+						{formatFullDate(slot.start, timezone)}
 					</p>
 					<p class="text-muted-foreground mt-1 text-sm">
 						{timezoneOffset}
@@ -199,7 +178,7 @@
 							<div class="flex-1">
 								<p class="text-muted-foreground text-xs font-medium">In your local time</p>
 								<p class="text-foreground text-sm font-semibold">
-									{formatLocalTime(slot.start)} - {formatLocalTime(slot.end)}
+									{formatTime(slot.start, localTimezone)} - {formatTime(slot.end, localTimezone)}
 								</p>
 							</div>
 						</div>

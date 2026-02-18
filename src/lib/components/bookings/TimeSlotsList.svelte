@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatInTimeZone } from 'date-fns-tz';
+	import { formatTime } from '$lib/utils/date-format';
 
 	interface TimeSlot {
 		start: Date;
@@ -23,17 +23,6 @@
 
 	let { slots, selectedTimezone, onSlotClick }: Props = $props();
 
-	/**
-	 * Formats a Date object as a time string in the selected timezone (e.g., "9:00 am").
-	 *
-	 * @param date - The date to format
-	 * @returns Formatted time string in lowercase (e.g., "9:00 am")
-	 */
-	function formatTime(date: Date): string {
-		if (!selectedTimezone) return '';
-		return formatInTimeZone(date, selectedTimezone, 'h:mm a').toLowerCase();
-	}
-
 	function handleSlotClick(slot: TimeSlot) {
 		onSlotClick?.(slot);
 	}
@@ -49,7 +38,7 @@
 			>
 				<div class="flex-1 text-center">
 					<p class="text-foreground text-lg font-semibold">
-						{formatTime(slot.start)}
+						{formatTime(slot.start, selectedTimezone)}
 					</p>
 				</div>
 			</button>
